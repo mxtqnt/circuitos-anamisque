@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Projeto</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <svg class="icon-large" viewBox="0 0 480 444" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M36.0002 201.57C13.1793 181.37 0 157.531 0 132C0 59.0984 107.452 0 240 0C372.548 0 480 59.0984 480 132C480 161.722 462.14 189.149 432 211.213V360C432 406.392 394.392 444 348 444H120C73.6084 444 36.0002 406.392 36.0002 360V201.57Z" fill="white"/>
+                </svg>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html" class="active" title="Projetos"><i data-lucide="folder-code"></i><span class="nav-text">Projetos</span></a>
+                <a href="snapshot.html" title="Snapshot"><i data-lucide="camera"></i><span class="nav-text">Snapshot</span></a>
+                <a href="sobre.html" title="Sobre Mim"><i data-lucide="user"></i><span class="nav-text">Sobre Mim</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <a href="index.html" class="btn-back"><i data-lucide="arrow-left"></i> Voltar aos Projetos</a>
+            </header>
+
+            <div class="content-scroll">
+                <div id="projectDetails" class="project-details-container fade-in">
+                    <!-- Conteúdo injetado via JS -->
+                    <div class="loading">Carregando projeto...</div>
+                </div>
+            </div>
+            <footer>
+                <p>Desenvolvido por <a href="https://www.instagram.com/anamisque/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">@anamisque</a></p>
+            </footer>
+        </main>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="zoomedImage">
+        <div id="caption"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

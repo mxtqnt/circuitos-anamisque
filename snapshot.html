@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino IDE Snapshot Generator v2</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --ide-theme-color: #ff4fa3; 
+            --ide-theme-dark: #b23772;   /* Cor calculada pelo JS para compatibilidade */
+            --fixed-pink: #ff4fa3;       /* Rosa fixo para os controles */
+            --fixed-pink-light: #ffd5e9; 
+            --fixed-pink-dark: #e03c8c;  
+        }
+
+        .snapshot-workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            background-color: #f5f6f8;
+        }
+
+        .controls-panel {
+            width: 400px;
+            background-color: var(--white, #ffffff);
+            border-right: 1px solid #e0e0e0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .controls-panel h2 {
+            margin-top: 0;
+            color: var(--fixed-pink);
+            font-size: 18px;
+            border-bottom: 2px solid var(--fixed-pink);
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .controls-panel label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .controls-panel input[type="text"], .controls-panel textarea {
+            width: 100%;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fafafa;
+            color: #333;
+        }
+
+        .controls-panel textarea {
+            height: 200px;
+            resize: vertical;
+        }
+
+        .color-picker-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-picker-row input[type="color"] {
+            width: 45px;
+            height: 40px;
+            padding: 0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button.btn-arduino-color {
+            flex: 1;
+            background-color: #00979C;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.btn-arduino-color:hover {
+            background-color: #007A7E;
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: var(--fixed-pink-light);
+            border-radius: 10px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--fixed-pink);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -5px;
+            box-shadow: 0 2px 5px rgba(255, 79, 163, 0.4);
+            transition: transform 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: var(--fixed-pink-light);
+            border-radius: 10px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--fixed-pink);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 5px rgba(255, 79, 163, 0.4);
+        }
+
+        .range-value {
+            font-size: 12px;
+            width: 45px;
+            text-align: right;
+            font-weight: bold;
+            color: #666;
+        }
+
+        button.btn-snapshot {
+            background-color: var(--fixed-pink);
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            margin-top: 5px;
+        }
+
+        button.btn-snapshot:hover {
+            background-color: var(--fixed-pink-dark);
+        }
+        
+        button.btn-snapshot:active {
+            transform: scale(0.98);
+        }
+
+        .preview-panel {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: auto;
+            background-color: #e9ecef;
+        }
+
+        #ide-window {
+            background-color: #ffffff;
+            border: 1px solid #95A5A6;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            
+            resize: both;
+            min-width: 400px;
+            min-height: 300px;
+            max-width: 1200px;
+            max-height: 1000px;
+        }
+
+        .ide-header {
+            background-color: var(--ide-theme-color);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            user-select: none;
+            transition: background-color 0.3s;
+        }
+
+        .ide-buttons { display: flex; gap: 12px; align-items: center; }
+        .ide-btn { width: 28px; height: 28px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .ide-btn svg { width: 14px; height: 14px; fill: #ffffff; opacity: 0.5; }
+        .ide-tabs { margin-left: 25px; display: flex; align-items: flex-end; height: 100%; }
+        .ide-tab { background-color: #ffffff; color: #333; font-size: 12px; padding: 8px 18px 6px 18px; border-top-left-radius: 4px; border-top-right-radius: 4px; border: 1px solid #95A5A6; border-bottom: none; margin-bottom: -1px; font-family: sans-serif; font-weight: 500; }
+        .ide-editor-container { display: flex; flex: 1; overflow: hidden; background-color: #ffffff; }
+        .ide-line-numbers { background-color: #F0F0F0; border-right: 1px solid #D1D1D1; color: #95A5A6; text-align: right; padding: 10px 10px; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; user-select: none; line-height: 1.5; }
+        .ide-code-display { flex: 1; padding: 10px 15px; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; color: #000000; white-space: pre; overflow: auto; line-height: 1.5; }
+        
+        /* Uso da nova variável segura para o html2canvas */
+        .ide-status-bar { background-color: var(--ide-theme-dark); color: #ffffff; font-size: 11px; padding: 6px 12px; font-family: sans-serif; user-select: none; transition: background-color 0.3s; }
+        
+        .arduino-keyword { color: var(--ide-theme-color); font-weight: bold; }
+        .arduino-function { color: #D35400; }
+        .arduino-literal { color: var(--ide-theme-color); }
+        .arduino-comment { color: #7E8C8D; font-style: italic; }
+        
+        /* Uso da nova variável segura para o html2canvas */
+        .arduino-string { color: var(--ide-theme-dark); }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+    <svg class="icon-large" viewBox="0 0 480 444" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M36.0002 201.57C13.1793 181.37 0 157.531 0 132C0 59.0984 107.452 0 240 0C372.548 0 480 59.0984 480 132C480 161.722 462.14 189.149 432 211.213V360C432 406.392 394.392 444 348 444H120C73.6084 444 36.0002 406.392 36.0002 360V201.57Z" fill="white"/>
+                </svg>
+</div>
+            <nav class="nav-links">
+                <a href="index.html" title="Projetos"><i data-lucide="folder-code"></i><span class="nav-text">Projetos</span></a>
+                <a href="snapshot.html" class="active" title="Snapshot"><i data-lucide="camera"></i><span class="nav-text">Snapshot</span></a>
+                <a href="sobre.html" title="Sobre Mim"><i data-lucide="user"></i><span class="nav-text">Sobre Mim</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="snapshot-workspace">
+                <div class="controls-panel">
+                    <h2>Configurações do Snapshot</h2>
+                    
+                    <div class="form-group">
+                        <label>Cor do Tema da Janela:</label>
+                        <div class="color-picker-row">
+                            <input type="color" id="theme-color" value="#ff4fa3" title="Escolha uma cor">
+                            <button class="btn-arduino-color" id="btn-arduino">Padrão Arduino</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="filename-input">Nome do Arquivo:</label>
+                        <input type="text" id="filename-input" value="piscando_led.ino">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="code-input">Código Arduino:</label>
+                        <textarea id="code-input">void setup()
+{
+  pinMode(7, OUTPUT);
+}
+
+void loop()
+{
+  digitalWrite(7, HIGH);
+  delay(1000); 
+  digitalWrite(7, LOW);
+  delay(1000); 
+}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="width-slider">Largura (px):</label>
+                        <div class="range-container">
+                            <input type="range" id="width-slider" min="400" max="1200" value="650">
+                            <span class="range-value" id="width-val">650px</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height-slider">Altura (px):</label>
+                        <div class="range-container">
+                            <input type="range" id="height-slider" min="300" max="1000" value="450">
+                            <span class="range-value" id="height-val">450px</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="font-slider">Tamanho da Fonte:</label>
+                        <div class="range-container">
+                            <input type="range" id="font-slider" min="11" max="24" value="14">
+                            <span class="range-value" id="font-val">14px</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-snapshot" id="btn-download">Salvar Snapshot (PNG)</button>
+                </div>
+
+                <div class="preview-panel">
+                    <div id="ide-window" style="width: 650px; height: 450px;">
+                        <div class="ide-header">
+                            <div class="ide-buttons">
+                                <div class="ide-btn" title="Verificar"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                                <div class="ide-btn" title="Carregar"><svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21 12l-8.15-8.15-1.42 1.42L16.86 11H5v2z"/></svg></div>
+                                <div class="ide-btn" title="Novo"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
+                                <div class="ide-btn" title="Abrir"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg></div>
+                                <div class="ide-btn" title="Salvar"><svg viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6V6z"/></svg></div>
+                            </div>
+                            <div class="ide-tabs">
+                                <div class="ide-tab" id="ide-tab-title">piscando_led.ino</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ide-editor-container">
+                            <div class="ide-line-numbers" id="line-numbers-container"></div>
+                            <div class="ide-code-display" id="code-raster" style="font-size: 14px;"></div>
+                        </div>
+                        
+                        <div class="ide-status-bar">
+                            <p>Desenvolvido por <a href="https://www.instagram.com/anamisque/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">@anamisque</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <p>Desenvolvido por anamisque</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        const codeInput = document.getElementById('code-input');
+        const filenameInput = document.getElementById('filename-input');
+        const ideTabTitle = document.getElementById('ide-tab-title');
+        const codeRaster = document.getElementById('code-raster');
+        const lineNumbersContainer = document.getElementById('line-numbers-container');
+        
+        const widthSlider = document.getElementById('width-slider');
+        const heightSlider = document.getElementById('height-slider');
+        const fontSlider = document.getElementById('font-slider');
+        
+        const widthVal = document.getElementById('width-val');
+        const heightVal = document.getElementById('height-val');
+        const fontVal = document.getElementById('font-val');
+        
+        const ideWindow = document.getElementById('ide-window');
+        const btnDownload = document.getElementById('btn-download');
+
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                const currentWidth = Math.round(entry.contentRect.width);
+                const currentHeight = Math.round(ideWindow.offsetHeight); 
+
+                if (currentWidth >= 400 && currentWidth <= 1200) {
+                    widthSlider.value = currentWidth;
+                    widthVal.textContent = currentWidth + 'px';
+                }
+                if (currentHeight >= 300 && currentHeight <= 1000) {
+                    heightSlider.value = currentHeight;
+                    heightVal.textContent = currentHeight + 'px';
+                }
+            }
+        });
+        resizeObserver.observe(ideWindow);
+
+        // Função para calcular uma cor mais escura manualmente sem depender do CSS moderno
+        function adjustColorDarken(hex, percent) {
+            hex = hex.replace('#', '');
+            if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+
+            r = Math.floor(r * (1 - percent));
+            g = Math.floor(g * (1 - percent));
+            b = Math.floor(b * (1 - percent));
+
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        const themeColorInput = document.getElementById('theme-color');
+        const btnArduinoColor = document.getElementById('btn-arduino');
+
+        themeColorInput.addEventListener('input', (e) => {
+            const color = e.target.value;
+            document.documentElement.style.setProperty('--ide-theme-color', color);
+            document.documentElement.style.setProperty('--ide-theme-dark', adjustColorDarken(color, 0.3));
+        });
+
+        btnArduinoColor.addEventListener('click', () => {
+            const arduinoTeal = '#00979C';
+            themeColorInput.value = arduinoTeal;
+            document.documentElement.style.setProperty('--ide-theme-color', arduinoTeal);
+            document.documentElement.style.setProperty('--ide-theme-dark', adjustColorDarken(arduinoTeal, 0.3));
+        });
+
+        function highlightArduino(code) {
+            let escaped = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            const regex = /(\/\*[\s\S]*?\*\/|\/\/.*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:void|int|float|double|char|long|unsigned|boolean|bool|setup|loop|if|else|for|while|switch|case|break|return|OUTPUT|INPUT|HIGH|LOW)\b|\b(?:pinMode|digitalWrite|digitalRead|analogWrite|analogRead|delay|delayMicroseconds|millis|micros|Serial|begin|print|println)\b)/g;
+
+            return escaped.replace(regex, (match) => {
+                if (match.startsWith('/*') || match.startsWith('//')) return `<span class="arduino-comment">${match}</span>`;
+                if (match.startsWith('"') || match.startsWith("'")) return `<span class="arduino-string">${match}</span>`;
+                if (/^(void|int|float|double|char|long|unsigned|boolean|bool|setup|loop|if|else|for|while|switch|case|break|return)$/.test(match)) return `<span class="arduino-keyword">${match}</span>`;
+                if (/^(HIGH|LOW|INPUT|OUTPUT)$/.test(match)) return `<span class="arduino-literal">${match}</span>`;
+                if (/^(pinMode|digitalWrite|digitalRead|analogWrite|analogRead|delay|delayMicroseconds|millis|micros|Serial|begin|print|println)$/.test(match)) return `<span class="arduino-function">${match}</span>`;
+                return match;
+            });
+        }
+
+        function renderCode() {
+            const rawCode = codeInput.value;
+            const highlighted = highlightArduino(rawCode);
+            const lines = rawCode.split('\n');
+            const highlightedLines = highlighted.split('\n');
+            
+            let lineNumbersHtml = '';
+            let codeLinesHtml = '';
+            
+            lines.forEach((line, index) => {
+                lineNumbersHtml += `<div style="height: 1.5em;">${index + 1}</div>`;
+                codeLinesHtml += `<div style="height: 1.5em; min-height: 1.5em;">${highlightedLines[index] || '&nbsp;'}</div>`;
+            });
+            
+            lineNumbersContainer.innerHTML = lineNumbersHtml;
+            codeRaster.innerHTML = codeLinesHtml;
+        }
+
+        filenameInput.addEventListener('input', () => {
+            ideTabTitle.textContent = filenameInput.value || 'sketch.ino';
+        });
+
+        widthSlider.addEventListener('input', (e) => {
+            ideWindow.style.width = e.target.value + 'px';
+            widthVal.textContent = e.target.value + 'px';
+        });
+
+        heightSlider.addEventListener('input', (e) => {
+            ideWindow.style.height = e.target.value + 'px';
+            heightVal.textContent = e.target.value + 'px';
+        });
+
+        fontSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            codeRaster.style.fontSize = val + 'px';
+            lineNumbersContainer.style.fontSize = val + 'px';
+            fontVal.textContent = val + 'px';
+        });
+
+        codeInput.addEventListener('input', renderCode);
+
+        btnDownload.addEventListener('click', () => {
+            btnDownload.textContent = "Salvando...";
+            btnDownload.disabled = true;
+            
+            ideWindow.style.resize = 'none'; 
+            
+            setTimeout(() => {
+                html2canvas(ideWindow, {
+                    scale: 2,
+                    backgroundColor: null, 
+                    logging: false,
+                    allowTaint: true,
+                    useCORS: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    const customName = filenameInput.value.replace(/\.[^/.]+$/, "") || "arduino_sketch";
+                    link.download = `${customName}_Snapshot.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    btnDownload.textContent = "Salvar Snapshot (PNG)";
+                    btnDownload.disabled = false;
+                    ideWindow.style.resize = 'both'; 
+                }).catch(err => {
+                    console.error("Erro no html2canvas:", err);
+                    alert("Erro ao processar imagem. Tente novamente.");
+                    btnDownload.textContent = "Salvar Snapshot (PNG)";
+                    btnDownload.disabled = false;
+                    ideWindow.style.resize = 'both';
+                });
+            }, 150); // Aumento de delay para garantir que o estilo aplicou
+        });
+
+        renderCode();
+    </script>
+</body>
+</html>

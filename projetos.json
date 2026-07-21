@@ -1,0 +1,284 @@
+[
+  {
+    "pastaNome": "buzzer_chuva",
+    "arquivos": [
+      "buzzer_chuva.ino",
+      "circuito.png",
+      "image.png"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "Buzzer",
+      "Sensor de Chuva",
+      "Resistor",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "buzzer_inclinacao",
+    "arquivos": [
+      "buzzer_inclinacao.ino",
+      "circuito.png",
+      "image.png"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "Buzzer",
+      "Sensor de Inclinação (Tilt)",
+      "Resistor",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "buzzer_infravermelho",
+    "arquivos": [
+      "buzzer_infravermelho.ino",
+      "circuito.png",
+      "image.png"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "Buzzer",
+      "Sensor Infravermelho",
+      "Resistor",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "buzzer_luminosidade",
+    "arquivos": [
+      "buzzer_luminosidade.ino",
+      "circuito.png",
+      "image.png"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "Buzzer",
+      "LDR",
+      "Resistor",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "buzzer_PIR",
+    "arquivos": [
+      "buzzer_PIR.ino",
+      "circuito.png",
+      "image.png"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "Buzzer",
+      "Sensor PIR",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "buzzer_solo",
+    "arquivos": [
+      "buzzer_solo.ino",
+      "circuito.png",
+      "image.png"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "Buzzer",
+      "Sensor de Umidade do Solo",
+      "Resistor",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "buzzer_ultrassonico",
+    "arquivos": [
+      "buzzer_ultrassonico.ino",
+      "circuito.png",
+      "image.png"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "Buzzer",
+      "Sensor Ultrassônico HC-SR04",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "buzzer_vibracao",
+    "arquivos": [
+      "buzzer_vibracao.ino",
+      "circuito.png",
+      "image.png"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "Buzzer",
+      "Sensor de Vibração",
+      "Resistor",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "led_chuva",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "led_chuva.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED",
+      "Sensor de Chuva",
+      "Resistores",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "led_inclinacao",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "led_inclinacao.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED",
+      "Sensor de Inclinação (Tilt)",
+      "Resistores",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "led_infravermelho",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "led_infravermelho.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED",
+      "Sensor Infravermelho",
+      "Resistores",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "led_luminosidade",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "led_luminosidade.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED",
+      "LDR",
+      "Resistores",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "led_PIR",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "led_PIR.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED",
+      "Sensor PIR",
+      "Resistores",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "led_solo",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "led_solo.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED",
+      "Sensor de Umidade do Solo",
+      "Resistores",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "led_ultrassonico",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "led_ultrassonico.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED",
+      "Sensor Ultrassônico HC-SR04",
+      "Resistores",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "led_vibracao",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "led_vibracao.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED",
+      "Sensor de Vibração",
+      "Resistores",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "piscando_led",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "piscando_led.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED",
+      "Resistor",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "semaforo_simples",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "semaforo_simples.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "LED Vermelho",
+      "LED Amarelo",
+      "LED Verde",
+      "Resistores",
+      "Jumpers"
+    ]
+  },
+  {
+    "pastaNome": "tocando_buzzer",
+    "arquivos": [
+      "circuito.png",
+      "image.png",
+      "tocando_buzzer.ino"
+    ],
+    "componentes": [
+      "Arduino Uno",
+      "Buzzer",
+      "Resistor",
+      "Jumpers"
+    ]
+  }
+]
